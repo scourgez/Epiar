@@ -10,6 +10,33 @@
 #include "common.h"
 #include "Utilities/log.h"
 
+#if defined (_MSC_VER)
+
+#include <stdio.h>
+#include <stdarg.h>
+
+void WriteLogToConsole(const char *file, int line, const char *msg, ...)
+{
+	if (msg)
+	{
+		va_list args;
+		va_start(args, msg);
+
+		char buffer[512];
+
+		_vsnprintf(buffer, sizeof(buffer), msg, args);
+
+		va_end(args);
+
+		char formatBuffer[512];
+
+		_snprintf(formatBuffer, sizeof(formatBuffer), "%s (%d): %s\n", file, line, buffer);
+
+		OutputDebugString(formatBuffer);
+	}
+}
+#endif
+
 /**\class Log
  * \brief Main logging facilities for the code base. */
 

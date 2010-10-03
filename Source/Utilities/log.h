@@ -25,7 +25,13 @@
 #ifdef DISABLE_LOGGING
 	#define LogMsg(LVL,...)
 #else
+	#if defined(_MSC_VER)
+			// printf() doesn't write to the console on Windows
+			void WriteLogToConsole(const char *file, int line, const char *msg, ...);
+			#define LogMsg(LVL,S,...) WriteLogToConsole(__FILE__, __LINE__, S, __VA_ARGS__)
+	#else
 	#define LogMsg(LVL,...) Log::Instance().realLog(Log::LVL,__PRETTY_FUNCTION__,__VA_ARGS__)
+	#endif
 #endif//ENABLE_LOGGING
 
 class Log {

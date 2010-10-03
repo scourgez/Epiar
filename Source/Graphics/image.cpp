@@ -307,16 +307,21 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 
 	// generate the texture
 	glGenTextures( 1, &image );
+	assert(glGetError() == GL_NO_ERROR);
 
 	// use the bitmap data stored in the SDL_Surface
 	glBindTexture( GL_TEXTURE_2D, (unsigned int)image );
+	assert(glGetError() == GL_NO_ERROR);
 
 	// upload the texture data, letting OpenGL do any required conversion.
 	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, real_w, real_h, 0, img_format, img_type, s->pixels );
+	assert(glGetError() == GL_NO_ERROR);
 
 	// linear filtering
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	assert(glGetError() == GL_NO_ERROR);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	assert(glGetError() == GL_NO_ERROR);
 
 	SDL_FreeSurface( s );
 

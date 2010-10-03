@@ -75,13 +75,21 @@ bool Video::Initialize( void ) {
 	
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-	int w = OPTION( int, "options/video/w" );
-	int h = OPTION( int, "options/video/h" );
-	bool fullscreen = (bool)OPTION( int, "options/video/fullscreen" );
+	// OPTION macro doesn't return a default or 0 value if it can't find the option.
+	// So we need to initialize these or the if case below won't work
+	int w = 0, h = 0;
+	bool fullscreen = false;
+
+	w = OPTION( int, "options/video/w" );
+	h = OPTION( int, "options/video/h" );
+	fullscreen = (bool)OPTION( bool, "options/video/fullscreen" );
 
 	// If w/h not set, then 1024x768 is windowed default, native screen resolution is fullscreen default
-	if( !w && !h ) {
-		if( OPTION( int, "options/video/fullscreen" ) ) {
+	// id (!w && !h) doesn't account for user error. Someone could pass 0 for only one value, or a negative number.
+	if( w <= 0 || h <= 0 ) {
+		LogMsg(ALERT, "Video width and height not set correctly.");
+
+		if( OPTION( bool, "options/video/fullscreen" ) ) {
 			// fullscreen set, use native resolution
 			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 
